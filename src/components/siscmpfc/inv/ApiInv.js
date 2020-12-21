@@ -28,4 +28,16 @@ export class ApiInv extends Api {
   async deleteSubCategoria(id) {
     return await super.delete("subcategoria", id);
   }
+
+  async getProductos(id = -1) {
+    return await super.get("producto", id);
+  }
+
+  async saveProducto(obj) {
+    return await super.save("producto", obj);
+  }
+
+  async deleteProducto(id) {
+    return await super.delete("producto", id);
+  }
 }
