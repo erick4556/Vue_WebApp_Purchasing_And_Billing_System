@@ -14,7 +14,7 @@
 
           <v-toolbar-title>Módulo Inventario</v-toolbar-title>
 
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn icon @click="chooseOpt(1)">
             <v-icon>featured_video</v-icon>
           </v-btn>
@@ -37,6 +37,7 @@
     <v-row>
       <v-col>
         <Category v-if="opt == 1" />
+        <SubCategory v-if="opt == 2" />
         <!--  <Categoria v-if="opt == 1" />
         <SubCategoria v-if="opt == 2" />
         <Producto v-if="opt == 3" /> -->
@@ -47,6 +48,7 @@
 
 <script>
 import Category from "./Category";
+import SubCategory from "./SubCategory";
 /* import Categoria from "./Categoria";
 import SubCategoria from "./SubCategoria";
 import Producto from "./Producto"; */
@@ -54,6 +56,7 @@ export default {
   name: "Inventario",
   components: {
     Category,
+    SubCategory,
     /*   Categoria,
     SubCategoria,
     Producto, */
