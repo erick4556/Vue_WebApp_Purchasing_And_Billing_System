@@ -12,7 +12,7 @@
         >
           <v-app-bar-nav-icon />
 
-          <v-toolbar-title>Módulo Inventario</v-toolbar-title>
+          <v-toolbar-title>Módulo Compra</v-toolbar-title>
 
           <v-spacer />
           <v-btn icon @click="chooseOpt(1)">
@@ -20,9 +20,6 @@
           </v-btn>
           <v-btn icon @click="chooseOpt(2)">
             <v-icon>featured_play_list</v-icon>
-          </v-btn>
-          <v-btn icon @click="chooseOpt(3)">
-            <v-icon>view_comfy</v-icon>
           </v-btn>
         </v-app-bar>
         <v-sheet
@@ -36,25 +33,19 @@
     </v-row>
     <v-row>
       <v-col>
-        <Category v-if="opt === 1" />
-        <SubCategory v-if="opt === 2" />
-        <Producto v-if="opt === 3" />
+        <Providers v-if="opt === 1" />
+        <div v-if="opt === 2">Comprar</div>
       </v-col>
     </v-row>
   </div>
 </template>
 
 <script>
-import Category from "./Category";
-import SubCategory from "./SubCategory";
-import Producto from "./Producto";
-
+import Providers from "./Providers";
 export default {
-  name: "Inventario",
+  name: "Purchases",
   components: {
-    Category,
-    SubCategory,
-    Producto,
+    Providers,
   },
   data() {
     return {
