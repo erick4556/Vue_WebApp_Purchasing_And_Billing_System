@@ -1,0 +1,221 @@
+<template>
+  <v-app>
+    <v-container>
+      <v-row>
+        <v-col>
+          <!-- <v-text-field v-model="editedEnc.id" append-icon="mdi-magnify" label="No. Cmp" disabled=""></v-text-field> -->
+          <v-row>
+            <v-col cols="12" md="8">
+              <v-text-field
+                v-model="editedEnc.id"
+                append-icon="mdi-magnify"
+                label="No. Cmp"
+                disabled=""
+              />
+            </v-col>
+          </v-row>
+        </v-col>
+        <v-col>
+          <v-dialog
+            ref="dialog"
+            v-model="dialogFecha"
+            :return-value.sync="editedEnc.fecha"
+            persistent
+            width="290px"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                v-model="editedEnc.fecha"
+                label="Fecha Compra"
+                prepend-icon="event"
+                readonly
+                v-bind="attrs"
+                v-on="on"
+              />
+            </template>
+            <v-date-picker
+              v-model="editedEnc.fecha"
+              scrollable
+              color="success"
+              locale="es"
+            >
+              <v-spacer />
+              <v-btn text color="primary" @click="dialogFecha = false"
+                >Cancel</v-btn
+              >
+              <v-btn
+                text
+                color="primary"
+                @click="$refs.dialog.save(editedEnc.fecha)"
+                >OK</v-btn
+              >
+            </v-date-picker>
+          </v-dialog>
+        </v-col>
+        <v-col>
+          <v-autocomplete
+            v-model="editedEnc.proveedor"
+            :items="proveedores"
+            label="Proveedor"
+            item-text="nombre"
+            item-value="id"
+            return-object
+            prepend-icon="mdi-city"
+            :rules="textRules"
+          />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <v-autocomplete
+            v-model="editedDetalle.producto"
+            :items="productos"
+            label="Producto"
+            item-text="descripcion"
+            item-value="id"
+            return-object
+            prepend-icon="mdi-city"
+            :rules="textRules"
+          />
+        </v-col>
+        <v-col>
+          <v-text-field
+            v-model="editedDetalle.cantidad"
+            append-icon="mdi-magnify"
+            label="Cantidad"
+          ></v-text-field>
+        </v-col>
+        <v-col>
+          <v-text-field
+            v-model="editedDetalle.precio"
+            append-icon="mdi-magnify"
+            label="Precio"
+          ></v-text-field>
+        </v-col>
+        <v-col>
+          <v-btn color="warning" fab icon :disabled="!formValido" @click="save">
+            <v-icon>save</v-icon>
+          </v-btn>
+          <v-btn color="error" icon @click="editedDetalle = detalle_inicial">
+            <v-icon>cleaning_services</v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <v-data-table
+            :headers="headers"
+            item-key="name"
+            class="elevation-1"
+            dense
+            :loading="loading"
+            loading-text="Cargando..."
+            :items="detalle"
+          >
+            <template slot="headers" slot-scope="props">
+              <tr>
+                <th
+                  v-for="header in props.headers"
+                  :key="header.text"
+                  :class="[
+                    'column sortable',
+                    pagination.descending ? 'desc' : 'asc',
+                    header.value === pagination.sortBy ? 'active' : '',
+                  ]"
+                  @click="changeSort(header.value)"
+                >
+                  <v-icon small>arrow_upward</v-icon>
+                  {{ header.text }}
+                </th>
+              </tr>
+            </template>
+          </v-data-table>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-app>
+</template>
+
+<script>
+import { ApiCmp } from "./ApiCmp";
+import { ApiInv } from "../inv/ApiInv";
+export default {
+  name: "Purchase",
+  data() {
+    return {
+      today:
+        new Date().getFullYear() +
+        "-" +
+        +(new Date().getMonth() + 1) +
+        "-" +
+        new Date().getDate(),
+      loading: false,
+      formValido: true,
+      dialogFecha: false,
+      search: "",
+      headers: [
+        { text: "ID", value: "id" },
+        {
+          text: "Producto",
+          align: "start",
+          sortable: true,
+          value: "producto_descripcion",
+        },
+        {
+          text: "Cantidad",
+          align: "start",
+          sortable: true,
+          value: "cantidad",
+        },
+        { text: "Precio", value: "precio", sortable: false },
+        { text: "Sub Total", value: "subtotal", sortable: false },
+        { text: "Descuento", value: "descuento", sortable: false },
+        { text: "Total", value: "total", sortable: false },
+        { text: "Acciones", value: "actions", sortable: false },
+      ],
+      textRules: [(v) => !!v || "Requerido"],
+      detalle: [],
+      productos: [],
+      proveedores: [],
+      editedEnc: {
+        id: -1,
+        proveedor: {
+          id: -1,
+          nombre: "",
+        },
+        fecha: this.today,
+      },
+      editedDetalle: {
+        id: -1,
+        cabecera: -1,
+        producto: -1,
+        cantidad: 0,
+        precio: 0,
+        subtotal: 0,
+        descuento: 0,
+        total: 0,
+      },
+      api: new ApiCmp(),
+      apiInv: new ApiInv(),
+    };
+  },
+  methods: {
+    async start() {
+      this.loading = true;
+      let r = await this.api.getProveedores();
+      console.log(r);
+      this.proveedores = r;
+      this.productos = await this.apiInv.getProductos();
+      console.log(this.productos);
+      this.editedDetalle = Object.assign({}, this.detalle_inicial);
+      this.editedEnc = Object.assign({}, this.encabezado_inicial);
+      this.detalle = [];
+      this.editedEnc.fecha = this.today;
+      this.loading = false;
+    },
+  },
+  created() {
+    this.start();
+  },
+};
+</script>

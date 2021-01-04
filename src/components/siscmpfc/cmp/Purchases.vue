@@ -34,7 +34,7 @@
     <v-row>
       <v-col>
         <Providers v-if="opt === 1" />
-        <div v-if="opt === 2">Comprar</div>
+        <Purchase v-if="opt === 2" />
       </v-col>
     </v-row>
   </div>
@@ -42,10 +42,12 @@
 
 <script>
 import Providers from "./Providers";
+import Purchase from "./Purchase";
 export default {
   name: "Purchases",
   components: {
     Providers,
+    Purchase,
   },
   data() {
     return {
