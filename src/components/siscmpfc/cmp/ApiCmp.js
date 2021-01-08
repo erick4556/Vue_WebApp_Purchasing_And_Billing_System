@@ -24,15 +24,15 @@ export class ApiCmp extends Api {
     return await super.get(nombreEnc, id);
   }
 
-  async guardarEncabezado(obj) {
+  async saveEnc(obj) {
     return await super.save(nombreEnc, obj);
   }
 
-  async guardarDetalle(obj) {
+  async saveDetail(obj) {
     return await super.save(nombreDet, obj);
   }
 
-  async borrarDetalle(id) {
+  async deleteDetail(id) {
     return await super.delete(nombreDet, id);
   }
 }
