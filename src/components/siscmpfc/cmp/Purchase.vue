@@ -4,6 +4,23 @@
       <v-container>
         <v-row>
           <v-col>
+            <v-app-bar color="green" dense>
+              <v-btn icon @click="start">
+                <v-icon>add_box</v-icon>
+              </v-btn>
+              <v-btn color="red" icon @click="searchD">
+                <v-icon>search</v-icon>
+              </v-btn>
+              <v-spacer />
+              <div v-for="(value, key) in totales" :key="key">
+                <span class="text-capitalize red--text"> {{ key }}</span>
+                <span class="font-weight-bold"> {{ value }}</span>
+              </div>
+            </v-app-bar>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
             <!-- <v-text-field v-model="editedEnc.id" append-icon="mdi-magnify" label="No. Cmp" disabled=""></v-text-field> -->
             <v-row>
               <v-col cols="12" md="8">
@@ -142,6 +159,28 @@
                   </th>
                 </tr>
               </template>
+              <template v-slot:no-data>
+                <v-alert dense type="info">No Hay Registros</v-alert>
+              </template>
+              <template v-slot:item.actions="{ item }">
+                <v-icon color="danger" small @click="deleteDetail(item)"
+                  >mdi-delete</v-icon
+                >
+              </template>
+              <template slot="body.append">
+                <tr
+                  class="red--text text--darken-4 blue lighten-4 font-weight-bold"
+                >
+                  <td></td>
+                  <td></td>
+                  <td>{{ totales.cantidad }}</td>
+                  <td></td>
+                  <td>{{ totales.subtotal }}</td>
+                  <td>{{ totales.decuento }}</td>
+                  <td>{{ totales.total }}</td>
+                  <td></td>
+                </tr>
+              </template>
             </v-data-table>
           </v-col>
         </v-row>
@@ -235,6 +274,23 @@ export default {
     today() {
       return new Date().toISOString().substring(0, 10);
     },
+    totales() {
+      let t = {
+        cantidad: 0,
+        subtotal: 0,
+        descuento: 0,
+        total: 0,
+      };
+      if (this.detalle) {
+        this.detalle.reduce((i, item) => {
+          t.cantidad += item.cantidad;
+          t.subtotal += item.subtotal;
+          t.descuento += item.descuento;
+          t.total += item.total;
+        }, 0); //El valor inicial es 0
+      }
+      return t;
+    },
   },
   methods: {
     async start() {
@@ -273,7 +329,11 @@ export default {
         return false;
       }
       if (det.precio <= 0) {
-        this.$swal("Precio Erróneo", " No se aceptan CERO o NEGATIVOS", "error");
+        this.$swal(
+          "Precio Erróneo",
+          " No se aceptan CERO o NEGATIVOS",
+          "error"
+        );
         return false;
       }
       const encabezado = {
@@ -340,6 +400,33 @@ export default {
         }
       } else {
         this.$swal("Búsqueda Cancelada", "", "warning");
+      }
+    },
+    async deleteDetail(item) {
+      const result = await this.prompt(
+        `${item.producto_descripcion} con id ${item.id}?`,
+        "¿Borrar"
+      );
+      console.log(result);
+      if (result.isConfirmed) {
+        await this.api.deleteDetail(item.id);
+        this.updateDetail();
+      }
+    },
+    async prompt(mensaje, titulo) {
+      try {
+        let result = await this.$swal({
+          title: titulo,
+          text: mensaje,
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Si",
+          cancelButtonText: "No",
+          reverseButtons: true,
+        });
+        return result;
+      } catch (e) {
+        console.error(e);
       }
     },
   },
