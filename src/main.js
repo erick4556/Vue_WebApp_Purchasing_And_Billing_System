@@ -16,6 +16,25 @@ Vue.use(VueSweetalert2);
 
 Vue.config.productionTip = false;
 
+//Uso de mixin globales
+Vue.mixin({
+  methods: {
+    msg(texto, titulo = "", tipo = "success") {
+      this.$swal({
+        title: titulo,
+        text: texto,
+        icon: tipo,
+        allowOutsideClick: false,
+        confirmButtonText: "Ok",
+      });
+    },
+    msgError(txt) {
+      this.msg(txt, "Mixin global", "error");
+    },
+  },
+});
+//----------
+
 new Vue({
   router,
   vuetify,

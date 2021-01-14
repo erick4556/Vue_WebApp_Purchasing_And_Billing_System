@@ -94,8 +94,10 @@
 
 <script>
 import { ApiInv } from "./ApiInv";
+import messageMixin from "../../../../src/mixin/messageMixin";
 export default {
   name: "Category",
+  mixins: [messageMixin],
   data: () => {
     return {
       items: [],
@@ -148,7 +150,9 @@ export default {
         let r = await this.api.getCategorias();
         this.items = r;
       } catch (error) {
-        alert(error);
+        // alert(error);
+        //this.mensaje(error, "Error", "error"); //Mixin local
+        this.msgError(error); //Mixin global
       } finally {
         this.loading = false;
       }
@@ -168,8 +172,10 @@ export default {
         await this.api.saveCategoria(obj);
         this.close();
         this.start();
+        this.mensaje("Guardado satisfactoriamente"); //Esta funcíon existe en el mixin
       } catch (error) {
-        alert(error);
+        // alert(error);
+        this.mensaje(error, "Error", "error");
       } finally {
         this.loading = false;
       }
@@ -180,9 +186,11 @@ export default {
       this.dialog = true;
     },
     async deleteItem(item) {
-      if (confirm("Borrar categoria?")) {
+      // if (confirm("Borrar categoria?")) {
+      if (await this.prompt(`Borrar Categoría ${item.descripcion}?`)) {
         await this.api.deleteCategoria(item.id);
         this.start();
+        this.mensaje("Eliminada satisfactoriamente", "Categoría");
       }
     },
   },
