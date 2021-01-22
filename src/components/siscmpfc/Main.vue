@@ -11,8 +11,8 @@
       <v-tab>Facturación</v-tab>
 
       <v-tab-item><Inventory /></v-tab-item>
-      <v-tab-item><Purchases /> </v-tab-item>
-      <v-tab-item>Detalle del Módulo de Facturación</v-tab-item>
+      <v-tab-item><Purchases /></v-tab-item>
+      <v-tab-item><Billings /></v-tab-item>
     </v-tabs>
   </v-card>
 </template>
@@ -20,11 +20,13 @@
 <script>
 import Inventory from "./inv/Inventory";
 import Purchases from "./cmp/Purchases";
+import Billings from "./fac/Billings";
 export default {
   name: "Main",
   components: {
     Inventory,
     Purchases,
+    Billings,
   },
 };
 </script>
