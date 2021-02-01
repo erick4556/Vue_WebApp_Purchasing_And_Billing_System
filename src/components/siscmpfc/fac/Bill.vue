@@ -1,0 +1,192 @@
+<template>
+  <b-container fluid>
+    <b-overlay :show="loading" spinner-variant="primary" rounded="sm">
+      <template v-slot:overlay>
+        <div class="text-center">
+          <b-icon icon="stopwatch" font-scale="3" animation="cylon" />
+          <p id="cancel-label">Un momento por favor...</p>
+        </div>
+      </template>
+      <b-row>
+        <b-col sm="1"><label for="id">No.:</label></b-col>
+        <b-col sm="2">
+          <b-form-input
+            v-model="encabezado.id"
+            :disabled="!editar"
+            type="text"
+          />
+        </b-col>
+        <b-col sm="1"><label for="fecha">Fecha:</label></b-col>
+        <b-col sm="2">
+          <b-form-input
+            v-model="encabezado.fecha"
+            :disabled="!editar"
+            type="text"
+          />
+        </b-col>
+        <b-col sm="1">
+          <label for="cliente">Cliente:</label>
+        </b-col>
+        <b-col sm="1">
+          <!--  <b-form-select
+            v-model="encabezado.cliente"
+            :options="clientes"
+            value-field="id"
+            text-field="nombre"
+          /> -->
+          <b-form-input
+            v-model="encabezado.cliente.id"
+            @blur="searchClient"
+            :disabled="encabezado.id != -1"
+          />
+        </b-col>
+        <b-col>
+          <b-form-input v-model="encabezado.cliente.nombre" disabled />
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col>
+          <b-card title="Productos" class="mb-2">
+            <b-row>
+              <b-col sm="1">
+                <b-form-input v-model="detalle.producto" />
+              </b-col>
+              <b-col sm="6">
+                <b-form-input v-model="detalle.descripcion" disabled="" />
+              </b-col>
+              <b-col sm="2">
+                <b-form-input
+                  v-model="detalle.cantidad"
+                  type="number"
+                  min="1"
+                  value="1"
+                />
+              </b-col>
+              <b-col sm="2">
+                <b-form-input v-model="detalle.precio" type="number" disabled />
+              </b-col>
+              <b-col sm="1">
+                <b-btn block variant="info">
+                  <b-icon icon="cart-plus" />
+                </b-btn>
+              </b-col>
+            </b-row>
+          </b-card>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col>
+          <b-card title="Detalle" class="mb-2">
+            <b-table
+              dense
+              stripped
+              hover
+              :items="items"
+              :fields="fields"
+              primary-key="id"
+              small
+              sticky-header
+              head-variant="light"
+              responsive="sm"
+              :busy="loading"
+              show-empty
+              emptyText="No hay datos"
+              emtpyFilterdText="No se encontró ningún registro"
+            >
+            </b-table>
+          </b-card>
+        </b-col>
+      </b-row>
+    </b-overlay>
+  </b-container>
+</template>
+
+<script>
+import { ApiFac } from "./ApiFac";
+import { ApiInv } from "../inv/ApiInv";
+import messageMixin from "../.././../mixin/messageMixin";
+export default {
+  name: "Bill",
+  mixins: [messageMixin],
+  data: () => {
+    return {
+      api: new ApiFac(),
+      apiInv: new ApiInv(),
+      editar: false,
+      loading: false,
+      search: "",
+      clientes: [],
+      items: [],
+      encabezado: {
+        id: -1,
+        cliente: {
+          id: -1,
+          nombre: "",
+        },
+        fecha: new Date().toLocaleString(),
+      },
+      detalle: {
+        id: -1,
+        cabecera: -1,
+        producto: -1,
+        cantidad: 0,
+        precio: 0,
+        subtotal: 0,
+        descuento: 0,
+        total: 0,
+      },
+      fields: [
+        { key: "id", label: "ID", sortable: true },
+        {
+          key: "producto_descripcion",
+          label: "Producto",
+          sortable: true,
+        },
+        {
+          key: "cantidad",
+          label: "Cantidad",
+        },
+        { key: "precio", label: "Precio" },
+        { key: "subtotal", label: "Sub Total" },
+        { key: "descuento", label: "Descuento" },
+        { key: "total", label: "Total" },
+        { key: "actions", label: "Acciones" },
+      ],
+    };
+  },
+  created() {
+    this.start();
+  },
+  methods: {
+    async start() {
+      try {
+        this.loading = true;
+        this.clientes = await this.api.getCliente();
+      } catch (error) {
+        this.msgError(error);
+      } finally {
+        this.loading = false;
+      }
+    },
+    async searchClient() {
+      try {
+        this.loading = true;
+        const res = await this.api.getCliente(this.encabezado.cliente.id);
+        if (res.detail) {
+          this.msgError(res.detail);
+          this.encabezado.cliente = {};
+        } else if (!res.estado) {
+          this.msgError("Cliente inactivo");
+          this.encabezado.cliente = {};
+        } else {
+          this.encabezado.cliente = res;
+        }
+      } catch (error) {
+        this.msgError(error);
+      } finally {
+        this.loading = false;
+      }
+    },
+  },
+};
+</script>

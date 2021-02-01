@@ -34,7 +34,7 @@
     <v-row>
       <v-col>
         <Clients v-if="opt === 1" />
-        <div v-if="opt === 2">Facturar</div>
+        <Bill v-if="opt === 2" />
       </v-col>
     </v-row>
   </div>
@@ -42,9 +42,10 @@
 
 <script>
 import Clients from "./Clients";
+import Bill from "./Bill";
 export default {
   name: "Purchases",
-  components: { Clients },
+  components: { Clients, Bill },
   data() {
     return {
       opt: null,

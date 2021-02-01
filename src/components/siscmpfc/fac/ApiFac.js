@@ -1,7 +1,8 @@
 import Api from "../Api";
 
 const contexto = "cliente";
-
+const contextoEnc = "facturas";
+const conextoDet = "facturas-detalle";
 export class ApiFac extends Api {
   constructor() {
     super();
@@ -17,5 +18,21 @@ export class ApiFac extends Api {
 
   async deleteCliente(id) {
     return await super.delete(contexto, id);
+  }
+
+  async getFacturas(id) {
+    return await super.get(contextoEnc, id);
+  }
+
+  async saveEncabezado(obj) {
+    return await super.save(contextoEnc, obj);
+  }
+
+  async saveDetalle(obj) {
+    return await super.save(conextoDet, obj);
+  }
+
+  async deleteDetalle(id) {
+    return await super.delete(conextoDet, id);
   }
 }
