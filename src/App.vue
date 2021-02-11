@@ -28,7 +28,7 @@
       <v-divider></v-divider>
 
       <v-list nav dense>
-        <div v-for="m in menu" :key="m.nombre">
+        <div v-for="m in menu" :key="m.name">
           <router-link :to="m.path">
             <v-list-item link>
               <v-list-item-icon>

@@ -195,8 +195,7 @@ export default {
         const r = await this.api.getCliente();
         this.items = r;
       } catch (error) {
-        alert(error);
-        console.log(error);
+        this.msgError(error);
       } finally {
         this.loading = false;
       }
