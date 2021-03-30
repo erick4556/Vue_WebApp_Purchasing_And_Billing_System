@@ -439,6 +439,7 @@ export default {
           if (!d.id) {
             this.msgError(`Fallo en guardar detalle con: ${d}`);
             this.encabezado.id = respEnc.id;
+            this.refresh();
           } else {
             this.detalle = { id: -1 };
             this.encabezado = respEnc;
@@ -551,7 +552,7 @@ export default {
           cancelButtonText: "No",
           reverseButtons: true,
         });
-        return result;
+        return result.isConfirmed;
       } catch (e) {
         console.error(e);
       }
