@@ -2,6 +2,10 @@
   <v-app>
     <v-system-bar>
       <v-app-bar-nav-icon @click.stop="showMenu = !showMenu" />
+      <v-spacer></v-spacer>
+      <v-icon>perm_identity</v-icon>{{ usuario }}
+      <div class="mx-1"></div>
+      <v-icon @click="logOut">logout</v-icon>
     </v-system-bar>
     <v-navigation-drawer
       v-model="showMenu"
@@ -79,7 +83,28 @@ export default {
       ],
       showMenu: false,
       miniVariant: true,
+      usuario: localStorage.getItem("usuario"),
     };
+  },
+  mounted() {
+    //Uso de session storage
+    /* this.$session.set("username", "usertest");
+    console.log(this.$session.get("username")); */
+    //this.$session.clear(); //Limpiar todas las variables de sesión
+    //this.$session.cler("variable"); //Limpiar una variable en específico de la sesión
+
+    //Uso de local storage
+    //localStorage.usuario = "usertest";
+    //console.log(localStorage.usuario);
+    localStorage.setItem("usuario", "usertest2");
+    console.log(localStorage.getItem("usuario"));
+  },
+  methods: {
+    logOut() {
+      localStorage.removeItem("usuario");
+      this.usuario = "";
+      this.$router.push("/");
+    },
   },
 };
 </script>

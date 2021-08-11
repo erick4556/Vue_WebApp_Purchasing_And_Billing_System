@@ -2,7 +2,11 @@
   <b-container>
     <b-row>
       <b-col>
-        <h1>Curso de Vue y Django <small>- Test</small></h1>
+        <h1>
+          Curso de Vue y Django <small>- Test </small
+          ><!-- Session Storage test:
+          {{ testSessionStorage }} -->
+        </h1>
         <img
           src="../assets/lights.jpg"
           alt=""
@@ -46,6 +50,7 @@ export default {
           color: "danger",
         },
       ],
+      //testSessionStorage: this.$session.get("username"),
     };
   },
 };
