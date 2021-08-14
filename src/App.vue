@@ -83,7 +83,7 @@ export default {
       ],
       showMenu: false,
       miniVariant: true,
-      usuario: localStorage.getItem("usuario"),
+      usuario: "",
     };
   },
   mounted() {
@@ -92,18 +92,23 @@ export default {
     console.log(this.$session.get("username")); */
     //this.$session.clear(); //Limpiar todas las variables de sesión
     //this.$session.cler("variable"); //Limpiar una variable en específico de la sesión
-
     //Uso de local storage
     //localStorage.usuario = "usertest";
     //console.log(localStorage.usuario);
-    localStorage.setItem("usuario", "usertest2");
-    console.log(localStorage.getItem("usuario"));
+    /*  localStorage.setItem("usuario", "usertest2");
+    console.log(localStorage.getItem("usuario")); */
+
+    //Escuche cualquier emisión del login
+    this.$root.$on("login", (user) => this.login(user));
   },
   methods: {
+    login(user) {
+      this.usuario = user;
+    },
     logOut() {
-      localStorage.removeItem("usuario");
+      localStorage.removeItem("username");
       this.usuario = "";
-      this.$router.push("/");
+      this.$router.push("/login");
     },
   },
 };

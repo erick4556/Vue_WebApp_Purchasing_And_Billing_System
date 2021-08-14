@@ -28,6 +28,11 @@ const routes = [
     name: "siscmpfc",
     component: () => import("./components/siscmpfc/Main"),
   },
+  {
+    path: "/login",
+    name: "login",
+    component: () => import("./components/login/Login"),
+  },
 ];
 
 const router = new VueRouter({
