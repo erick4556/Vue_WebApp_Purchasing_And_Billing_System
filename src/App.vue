@@ -107,6 +107,8 @@ export default {
     },
     logOut() {
       localStorage.removeItem("username");
+      localStorage.removeItem("access");
+      localStorage.removeItem("refresh");
       this.usuario = "";
       this.$router.push("/login");
     },

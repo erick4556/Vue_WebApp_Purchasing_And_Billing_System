@@ -1,3 +1,5 @@
+import { ApiAuth } from "../login/ApiAuth";
+const apiAuth = new ApiAuth();
 export default class Api {
   constructor() {
     this.SERVER_URL = "http://127.0.0.1:8000/rest/v1/";
@@ -8,22 +10,21 @@ export default class Api {
   }
 
   async getToken() {
-    try {
-      const r = await fetch(this.TOKEN_URL, {
-        method: "POST",
-        body: JSON.stringify(this.credenciales),
-        mode: "cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const token = await r.json(); //Para que procese la respuesta en json
+    /*  const r = await fetch(this.TOKEN_URL, {
+      method: "POST",
+      body: JSON.stringify(this.credenciales),
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const token = await r.json(); //Para que procese la respuesta en json */
 
-      return token;
-    } catch (error) {
-      console.warn(error.message);
-      return error.message;
-    }
+    const token = await apiAuth.getToken();
+
+    console.log(token);
+
+    return token;
   }
 
   async get(nombre, id = -1) {

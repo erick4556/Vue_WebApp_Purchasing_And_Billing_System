@@ -40,4 +40,15 @@ const router = new VueRouter({
   routes,
 });
 
+//Proteccion de rutas
+router.beforeEach((to, from, next) => {
+  const isLogged = localStorage.getItem("access") !== null ? true : false;
+  console.log(from.name, to.name);
+  if (to.name !== "login" && !isLogged) {
+    next({ name: "login" }); //Función de redireccionamiento
+  } else {
+    next();
+  }
+});
+
 export default router;

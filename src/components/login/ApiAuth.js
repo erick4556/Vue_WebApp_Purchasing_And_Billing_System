@@ -27,4 +27,15 @@ export class ApiAuth {
     const response = await axios.post("token/", this.credenciales);
     return response;
   }
+
+  getToken() {
+    const ACCESS = localStorage.getItem("access");
+    const REFRESH = localStorage.getItem("refresh");
+    /*   //Restricción con js
+    if (!ACCESS || !REFRESH) {
+      window.location.href = "login";
+    } */
+    const token = { access: ACCESS, refresh: REFRESH };
+    return token;
+  }
 }
